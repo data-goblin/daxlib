@@ -957,7 +957,6 @@ function 'DaxLib.SVG.Compound.Pill' =
 
 	annotation DAXLIB_PackageVersion = 0.1.2-beta
 
-/// Example chart created using the DaxLib.SVG functions
 /// Generate SVG performance bar with target line and status indicator
 /// Returns SVG string for use in Table/Matrix visuals (set Image size: Height 25px, Width 100px)
 /// actual					EXPR			Actual measure to evaluate
@@ -966,11 +965,10 @@ function 'DaxLib.SVG.Compound.Pill' =
 /// thresholdVeryBad		NUMERIC VAL		Performance thresholds (Percenage)
 /// thresholdBad			NUMERIC VAL		Performance thresholds (Percenage)
 /// thresholdGood			NUMERIC VAL		Performance thresholds (Percenage)
-/// thresholdVeryGood		NUMERIC VAL		Performance thresholds (Percenage)
-/// colourBadLow			STRING VAL		Status colours
-/// colourBadHigh			STRING VAL	 	Status colours
-/// colourGoodLow			STRING VAL		Status colours
-/// colourGoodHigh			STRING VAL		Status colours
+/// colourBadVeryBad		STRING VAL	 	Status colours
+/// colourBad				STRING VAL		Status colours
+/// colourGood				STRING VAL		Status colours
+/// colourVeryGood			STRING VAL		Status colours
 function 'DaxLib.SVG.BulletChart.ActionDot' =
 		(
 			actual: EXPR,
@@ -979,13 +977,12 @@ function 'DaxLib.SVG.BulletChart.ActionDot' =
 			thresholdVeryBad: NUMERIC VAL,
 			thresholdBad: NUMERIC VAL,
 			thresholdGood: NUMERIC VAL,
-			thresholdVeryGood: NUMERIC VAL,
-			colourBadLow: STRING VAL,
-			colourBadHigh: STRING VAL,
-			colourGoodLow: STRING VAL,
-			colourGoodHigh: STRING VAL
+			colourVeryBad: STRING VAL,
+			colourBad: STRING VAL,
+			colourGood: STRING VAL,
+			colourVeryGood: STRING VAL
 		) =>
-		
+	
 			// Chart dimensions
 			VAR _BarMax = 100
 			VAR _BarMin = 20
@@ -1003,22 +1000,14 @@ function 'DaxLib.SVG.BulletChart.ActionDot' =
 			VAR _Performance = DIVIDE( _Actual - _Target, _Target )
 
 			// Determine performance colour
-			VAR _Performancecolour =
+			VAR _ActionDotFill =
 				SWITCH(
 					true,
-					_Performance < thresholdVeryBad, 	colourBadLow,
-					_Performance < thresholdBad, 		colourBadHigh,
-					_Performance > thresholdVeryGood, 	colourGoodHigh,
-					_Performance > thresholdGood, 		colourGoodLow,
-					"#CFCFCF"  // Default grey
-				)
-
-			// Action dot fill color
-			VAR _ActionDotFill =
-				IF(
-					_Performance >= thresholdVeryBad && _Performance <= thresholdGood,
-					"none",  // Transparent
-					_Performancecolour
+					_Performance <= thresholdVeryBad, 	colourVeryBad, 
+					_Performance <= thresholdBad, 		colourBad,
+					_Performance <= thresholdGood, 		colourGood,
+					_Performance > thresholdGood, 		colourVeryGood,
+					"#CFCFCF"  // Default grey for neutral performance
 				)
 
 			// Scale
